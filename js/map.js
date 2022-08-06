@@ -101,18 +101,21 @@ const applyFilters = (similarAds) => {
   const filterFeaturesValue = [...housingFeaturesElement.querySelectorAll('[name="features"]')]
     .filter((item) => item.checked).map((item) => item.value);
 
-  const typeMatches = (ad) => isTypeMatchesToFilter(ad, housingTypeElement);
-  const priceMatches = (ad) => isPriceMatchesToFilter(ad, housingPriceElement);
-  const roomsMatch = (ad) => isRoomsMatchToFilter(ad, housingRoomsElement);
-  const guestsMatch = (ad) => isGuestsMatchToFilter(ad, housingGuestsElement);
-  const featuresMatch = (ad) => isFeaturesMatchToFilters(ad, filterFeaturesValue);
+  const matchesToAllFilters = (ad) => isTypeMatchesToFilter(ad, housingTypeElement)
+    && isPriceMatchesToFilter(ad, housingPriceElement)
+    && isRoomsMatchToFilter(ad, housingRoomsElement)
+    && isGuestsMatchToFilter(ad, housingGuestsElement)
+    && isFeaturesMatchToFilters(ad, filterFeaturesValue);
 
-  const sortedAds = similarAds
-    .filter(typeMatches)
-    .filter(priceMatches)
-    .filter(roomsMatch)
-    .filter(guestsMatch)
-    .filter(featuresMatch);
+  const sortedAds = [];
+  for (const ad of similarAds) {
+    if (matchesToAllFilters(ad)) {
+      sortedAds.push(ad);
+      if (sortedAds.length >= MAX_ADS_QUANTITY) {
+        break;
+      }
+    }
+  }
 
   renderAds(sortedAds);
 };
